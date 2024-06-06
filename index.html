@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boggle Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 3em;
+            color: #4CAF50;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        td {
+            border: 2px solid #4CAF50;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5em;
+            background-color: #fff;
+            width: 50px;
+            height: 50px;
+        }
+        .btn-success {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .btn-success:hover {
+            background-color: #45a049;
+        }
+        h2 {
+            font-size: 2em;
+            margin-top: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #e0f7fa;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Boggle Game</h1>
+    <table id="boggle-board">
+        <!-- Boggle board will be generated here -->
+    </table>
+    <div>
+        <button class="btn-success" role="button" onclick="findWords_bt()">Find Words With Backtracking</button>
+        <button class="btn-success" role="button" onclick="findWords_bb()">Find Words With Branch and Bound</button>
+    </div>
+    <h2>Found Words:</h2>
+    <ul id="found-words"></ul>
+
+    <script>
+        const board = [
+            ['N', 'E', 'W'],
+            ['S', 'T', 'A'],
+            ['A', 'L', 'L']
+        ];
+
+        function createBoard() {
+            const table = document.getElementById('boggle-board');
+            table.innerHTML = '';  // Clear the table first
+            for (let i = 0; i < board.length; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < board[i].length; j++) {
+                    const cell = document.createElement('td');
+                    cell.innerText = board[i][j];
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+        }
+
+        function findWords_bt() {
+            fetch('/find_words_bt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ board })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const wordsList = document.getElementById('found-words');
+                wordsList.innerHTML = '';
+                data.forEach(word => {
+                    const listItem = document.createElement('li');
+                    listItem.innerText = word;
+                    wordsList.appendChild(listItem);
+                });
+            });
+        }
+
+        function findWords_bb() {
+            fetch('/find_words_bb', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ board })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const wordsList = document.getElementById('found-words');
+                wordsList.innerHTML = '';
+                data.forEach(word => {
+                    const listItem = document.createElement('li');
+                    listItem.innerText = word;
+                    wordsList.appendChild(listItem);
+                });
+            });
+        }
+
+        window.onload = createBoard;
+    </script>
+</body>
+</html>
