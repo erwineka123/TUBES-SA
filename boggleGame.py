@@ -1,18 +1,24 @@
-# Memasukkan kamus kata yang akan di uji coba.
+# Memasukkan kamus kata yang akan diuji coba
 dictionary = {"NEW", "SEA", "WEST", "ALL"}
 
-# aturan permaianan boggle, pola langkah.
+# Membuat set prefix dari kamus untuk cek cepat
+prefix_set = set()
+for word in dictionary:
+    for i in range(1, len(word)):
+        prefix_set.add(word[:i])
+        
+# Aturan permaianan Boggle, pola langkah
 row = [-1, -1, -1, 0, 0, 1, 1, 1]
 col = [-1, 0, 1, -1, 1, -1, 0, 1]
 
-# perikasa kata dalam grid
+# Periksa kata dalam grid
 def valid(x, y, visit, board):
     return (0 <= x < len(board)) and (0 <= y < len(board[0])) and not visit[x][y]
 
 # Algoritma Backtracking
 def backtrackingSearchWord(board, visit, i, j, current_word):
     visit[i][j] = True
-    current_word = current_word + board[i][j]
+    current_word += board[i][j]
 
     if current_word in dictionary:
         found_words.add(current_word)
@@ -38,10 +44,16 @@ def branch_and_bound(board, visited, i, j, current_word, found_words):
     if len(current_word) >= 3 and current_word in dictionary:
         found_words.add(current_word)
 
+    # Melakukan pruning ketika current_word bukan awalan dari kata dalam kamus.
+    if current_word not in prefix_set and current_word not in dictionary:
+        visited[i][j] = False
+        return
+
     for k in range(8):
         next_i, next_j = i + row[k], j + col[k]
         if valid(next_i, next_j, visited, board):
             branch_and_bound(board, visited, next_i, next_j, current_word, found_words)
+
     visited[i][j] = False
 
 def find_words_backtrackingSearchWord(board):
